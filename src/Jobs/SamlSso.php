@@ -38,12 +38,15 @@ class SamlSso implements SamlContract
 {
     use Dispatchable, PerformsSingleSignOn;
 
+    private ?string $impersonationEmail;
+
     /**
      * [__construct description]
      */
-    public function __construct()
+    public function __construct(string $impersonationEmail = null)
     {
         $this->init();
+        $this->impersonationEmail = $impersonationEmail;
     }
 
     /**
@@ -112,7 +115,7 @@ class SamlSso implements SamlContract
             );
 
         $attribute_statement = new AttributeStatement;
-        event(new AssertionEvent($attribute_statement));
+        event(new AssertionEvent($attribute_statement, $this->impersonationEmail));
         // Add the attributes to the assertion
         $assertion->addItem($attribute_statement);
 
